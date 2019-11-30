@@ -1,0 +1,30 @@
+{
+  "name": "re-api-call",
+  "version": "0.0.1",
+  "reason": {
+    "react-jsx": 3
+  },
+  "sources": [
+    {
+      "dir": "examples",
+      "type": "dev"
+    },
+    {
+      "dir" : "src"
+    }
+  ],
+  "bs-dependencies": [
+    "reason-react",
+    "bs-fetch",
+    "@glennsl/bs-json"
+  ],
+  "warnings": {
+    "error": "+5+8"
+  },
+  "package-specs": {
+    "module": "es6-global",
+    "in-source": true
+  },
+  "suffix": ".bs.js",
+  "refmt": 3
+}
