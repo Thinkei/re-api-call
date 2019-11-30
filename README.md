@@ -12,4 +12,4 @@ npm install re-api-call
 ```
 
 ### How to use
-Look at [/examples/RandomDog.re](../master/examples/RandomDog.re)
+Look at [RandomDog.re](https://github.com/Thinkei/re-api-call/blob/master/examples/RandomDog.re)
