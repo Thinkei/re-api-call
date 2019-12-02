@@ -1,9 +1,13 @@
+let buildUrl = (url, params) => {
+  switch (params) {
+  | None => url
+  | Some(obj) => url ++ ApiCall__QueryString.stringify(obj)
+  };
+};
+
 module type Config = {
   type response;
   let decode: Js.Json.t => response;
-
-  let url: string;
-  let fetchMethod: Fetch.requestMethod;
 };
 
 module Make = (C: Config) => {
@@ -22,34 +26,26 @@ module Make = (C: Config) => {
     | FetchedSuccess(response) => `Loaded(response)
     };
 
-  let useApi = (authenBy) => {
+  let useApi = (~url, ~headers, ~method=`Get, ()) => {
     let (state, dispatch) = React.useReducer(reducer, `Initial);
-
-    React.useEffect0(() => {
+    let fetch = queryParams => {
       dispatch(StartFetching);
-
-      let headers =
-        switch (authenBy) {
-        | `SameOrigin =>
-          Fetch.HeadersInit.make({
-            "Content-Type": "application/json",
-            "mode": "cors",
-            "credentials": "include",
-          })
-        | `Jwt(jwtToken) =>
-          Fetch.HeadersInit.make({
-            "Content-Type": "application/json",
-            "mode": "cors",
-            "Jwt-Token": jwtToken,
-          })
-        | `NotSpecified =>
-          Fetch.HeadersInit.make({"Content-Type": "application/json"})
-        };
       let _ =
         Js.Promise.(
           Fetch.fetchWithInit(
-            url,
-            Fetch.RequestInit.make(~method_=fetchMethod, ~headers, ()),
+            buildUrl(url, queryParams),
+            Fetch.RequestInit.make(
+              ~method_={
+                switch (method) {
+                | `Get => Fetch.Get
+                | `Post => Fetch.Post
+                | `Patch => Fetch.Patch
+                | `Delete => Fetch.Delete
+                };
+              },
+              ~headers=Fetch.HeadersInit.make(headers),
+              (),
+            ),
           )
           |> then_(Fetch.Response.json)
           |> then_(json =>
@@ -59,8 +55,9 @@ module Make = (C: Config) => {
              )
           |> catch(_ => Js.Promise.resolve(dispatch(FetchedFailed)))
         );
-      None;
-    });
-    state;
+      ();
+    };
+
+    (state, fetch);
   };
 };

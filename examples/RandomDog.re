@@ -7,15 +7,24 @@ module ApiConfig = {
     message: Json.Decode.(json |> field("message", string)),
     status: Json.Decode.(json |> field("status", string)),
   };
-  let url = "https://dog.ceo/api/breeds/image/random";
-  let fetchMethod = Fetch.Get;
 };
 
 module RandomDogApi = ApiCall.Make(ApiConfig);
 
 [@react.component]
 let make = () => {
-  let apiState = RandomDogApi.useApi(`NotSpecified);
+  let (apiState, fetch) =
+    RandomDogApi.useApi(
+      ~url="https://dog.ceo/api/breeds/image/random",
+      ~headers={"Content-Type": "application/json"},
+      (),
+    );
+
+  React.useEffect0(() => {
+    fetch(None);
+    None;
+  });
+
   switch (apiState) {
   | `Initial
   | `Loading => <div> {"Loading" |> ReasonReact.string} </div>
