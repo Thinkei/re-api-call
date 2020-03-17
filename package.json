@@ -1,6 +1,6 @@
 {
   "name": "re-api-call",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "ReasonML Api Call hooks",
   "main": "src/ApiCall.re",
   "author": "Hieu Pham <hieu.pham@employmenthero.com>",
@@ -32,10 +32,9 @@
     "reason-react": "^0.7.0"
   },
   "devDependencies": {
-    "npm-force-resolutions": "0.0.3",
     "parcel-bundler": "^1.12.4"
   },
   "resolutions": {
-    "minimist": "1.2.3"
+    "minimist": "1.2.5"
   }
 }
