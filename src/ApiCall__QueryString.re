@@ -1,2 +1,2 @@
-[@bs.module "query-string"] [@react.component]
-external stringify: Js.t('a) => string = "stringify";
+[@bs.module "query-string"]
+external stringify: Js.Json.t => string = "stringify";

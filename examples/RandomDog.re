@@ -1,4 +1,9 @@
 module ApiConfig = {
+  type params = {q: string};
+  let encode = params => {
+    Json.Encode.(object_([("q", string(params.q))]));
+  };
+
   type response = {
     message: string,
     status: string,
@@ -21,7 +26,8 @@ let make = () => {
     );
 
   React.useEffect0(() => {
-    fetch(None);
+    let params: ApiConfig.params = {q: "dogs"};
+    fetch(params);
     None;
   });
 

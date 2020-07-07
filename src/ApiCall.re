@@ -1,20 +1,22 @@
-let buildUrl = (url, params) => {
-  switch (params) {
-  | None => url
-  | Some(obj) => url ++ ApiCall__QueryString.stringify(obj)
-  };
-};
-
-module type Config = {
-  type response;
-  let decode: Js.Json.t => response;
-};
-
 let (||=) = (value, defaultValue) =>
   switch (value) {
   | Some(v) => v
   | None => defaultValue
   };
+
+let mapOpt = (fn, value) =>
+  switch (value) {
+  | None => None
+  | Some(v) => fn(v)
+  };
+
+module type Config = {
+  type params;
+  let encode: params => Js.Json.t;
+
+  type response;
+  let decode: Js.Json.t => response;
+};
 
 module Make = (C: Config) => {
   open C;
@@ -32,14 +34,32 @@ module Make = (C: Config) => {
     | FetchedSuccess(response) => `Loaded(response)
     };
 
-  let useApi = (~url, ~headers, ~method=`Get, ~body=?, ()) => {
+  let useApi = (~url, ~headers, ~method=`Get, ()) => {
     let (state, dispatch) = React.useReducer(reducer, `Initial);
-    let fetch = queryParams => {
+    let fetch = (queryParams: params) => {
       dispatch(StartFetching);
+
+      let fullUrl =
+        switch (method) {
+        | `Post
+        | `Patch
+        | `Delete => url
+        | `Get => url ++ "?" ++ (queryParams |> encode |> ApiCall__QueryString.stringify)
+        };
+
+      Js.log(fullUrl);
+      let body =
+        switch (method) {
+        | `Post
+        | `Patch
+        | `Delete => Some(queryParams |> encode |> Js.Json.stringify)
+        | `Get => None
+        };
+
       let _ =
         Js.Promise.(
           Fetch.fetchWithInit(
-            buildUrl(url, queryParams),
+            fullUrl,
             Fetch.RequestInit.make(
               ~method_={
                 switch (method) {
@@ -50,12 +70,7 @@ module Make = (C: Config) => {
                 };
               },
               ~headers=Fetch.HeadersInit.make(headers),
-              ~body=
-                Fetch.BodyInit.make(
-                  Js.Json.stringify(
-                    Js.Json.object_(body ||= Js.Dict.empty()),
-                  ),
-                ),
+              ~body=Fetch.BodyInit.make(body ||= ""),
               (),
             ),
           )
