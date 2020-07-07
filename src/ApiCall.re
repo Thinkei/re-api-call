@@ -10,6 +10,12 @@ module type Config = {
   let decode: Js.Json.t => response;
 };
 
+let (||=) = (value, defaultValue) =>
+  switch (value) {
+  | Some(v) => v
+  | None => defaultValue
+  };
+
 module Make = (C: Config) => {
   open C;
   type state = [ | `Initial | `Loading | `Error | `Loaded(response)];
@@ -26,7 +32,7 @@ module Make = (C: Config) => {
     | FetchedSuccess(response) => `Loaded(response)
     };
 
-  let useApi = (~url, ~headers, ~method=`Get, ()) => {
+  let useApi = (~url, ~headers, ~method=`Get, ~body=?, ()) => {
     let (state, dispatch) = React.useReducer(reducer, `Initial);
     let fetch = queryParams => {
       dispatch(StartFetching);
@@ -44,6 +50,12 @@ module Make = (C: Config) => {
                 };
               },
               ~headers=Fetch.HeadersInit.make(headers),
+              ~body=
+                Fetch.BodyInit.make(
+                  Js.Json.stringify(
+                    Js.Json.object_(body ||= Js.Dict.empty()),
+                  ),
+                ),
               (),
             ),
           )
