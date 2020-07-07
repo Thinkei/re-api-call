@@ -1,6 +1,6 @@
 {
   "name": "re-api-call",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "ReasonML Api Call hooks",
   "main": "src/ApiCall.re",
   "author": "Hieu Pham <hieu.pham@employmenthero.com>",
@@ -26,10 +26,10 @@
   "dependencies": {
     "@glennsl/bs-json": "^5.0.1",
     "bs-fetch": "^0.5.0",
-    "bs-platform": "^5.2.1",
+    "bs-platform": "^8.0.3",
     "bsb-js": "^1.1.7",
     "query-string": "^5.1.1",
-    "reason-react": "^0.7.0"
+    "reason-react": "^0.9.1"
   },
   "devDependencies": {
     "parcel-bundler": "^1.12.4"
