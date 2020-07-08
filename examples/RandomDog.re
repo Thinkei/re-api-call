@@ -34,7 +34,7 @@ let make = () => {
   switch (apiState) {
   | `Initial
   | `Loading => <div> {"Loading" |> ReasonReact.string} </div>
-  | `Error => <div> {"Something went wrong" |> ReasonReact.string} </div>
+  | `Error(_) => <div> {"Something went wrong" |> ReasonReact.string} </div>
   | `Loaded(randomDog) => <img src={randomDog.message} />
   };
 };

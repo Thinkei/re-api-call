@@ -25,12 +25,12 @@ module Make = (C: Config) => {
   type action =
     | StartFetching
     | FetchedSuccess(response)
-    | FetchedFailed;
+    | FetchedFailed(Js.Promise.error);
 
   let reducer = (_, action: action) =>
     switch (action) {
     | StartFetching => `Loading
-    | FetchedFailed => `Error
+    | FetchedFailed(error) => `Error(error)
     | FetchedSuccess(response) => `Loaded(response)
     };
 
@@ -44,7 +44,10 @@ module Make = (C: Config) => {
         | `Post
         | `Patch
         | `Delete => url
-        | `Get => url ++ "?" ++ (queryParams |> encode |> ApiCall__QueryString.stringify)
+        | `Get =>
+          url
+          ++ "?"
+          ++ (queryParams |> encode |> ApiCall__QueryString.stringify)
         };
 
       Js.log(fullUrl);
@@ -80,7 +83,7 @@ module Make = (C: Config) => {
                |> decode
                |> (res => dispatch(FetchedSuccess(res)) |> resolve)
              )
-          |> catch(_ => Js.Promise.resolve(dispatch(FetchedFailed)))
+          |> catch(e => e->FetchedFailed |> dispatch |> resolve)
         );
       ();
     };

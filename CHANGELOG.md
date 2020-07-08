@@ -1,3 +1,6 @@
+### 0.0.8
+- Pass error to Error api state
+
 ### 0.0.7
 - Fix bug encode query url for get request
 - Fix bug encode params for body request

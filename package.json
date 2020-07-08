@@ -1,6 +1,6 @@
 {
   "name": "re-api-call",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "ReasonML Api Call hooks",
   "main": "src/ApiCall.re",
   "author": "Hieu Pham <hieu.pham@employmenthero.com>",
